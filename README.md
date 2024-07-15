@@ -1,23 +1,23 @@
 
-# Fashion Classification Model with AWS Lambda Deployment
+```markdown
+# Fashion Classification Model with Deep Learning
 
 ## Project Overview
 
-This project implements a Fashion Classification model using deep learning techniques to demonstrate how neural networks work. The model is trained to recognize different types of clothing items and is deployed as a serverless application using AWS Lambda.
+This project implements a Fashion Classification model using deep learning techniques to recognize different types of clothing items. The model is built using TensorFlow and Keras, leveraging transfer learning with the Xception architecture.
 
 ## Repository Contents
 
-- `clothing_model.tflite`: TensorFlow Lite model for clothing classification.
-- `deep-learning.ipynb`: Jupyter notebook containing the deep learning model development process.
-- `lambda_function.py`: Python script for the AWS Lambda function.
+- `deep-learning.ipynb`: Jupyter notebook containing the full model development process.
+- `clothing_model.tflite`: TensorFlow Lite model for clothing classification (output of the training process).
+- `lambda_function.py`: Python script for deploying the model as an AWS Lambda function.
 - `serverless.ipynb`: Jupyter notebook detailing the serverless deployment process.
-- `test.py`: Script for testing the Lambda function.
-- `xception_v4_1_epoch_11_val_accuracy_0.889.h5`: Trained Xception model with validation accuracy of 88.9%.
+- `test.py`: Script for testing the deployed model.
 - `Dockerfile`: Configuration for creating a Docker image for Lambda deployment.
 
 ## Model Architecture
 
-The model uses a transfer learning approach with the Xception architecture:
+The model uses transfer learning with the Xception architecture:
 
 ```python
 def make_model(input_size=150, learning_rate=0.01, size_inner=100, droprate=0.5):
@@ -54,9 +54,26 @@ def make_model(input_size=150, learning_rate=0.01, size_inner=100, droprate=0.5)
 The model is trained on the Clothing Dataset Small Master, available at:
 `/kaggle/input/clothing-dataset-small-master/clothing-dataset-small-master`
 
-## Lambda Function
+The dataset includes the following clothing categories:
+['dress', 'hat', 'longsleeve', 'outwear', 'pants', 'shirt', 'shoes', 'shorts', 'skirt', 't-shirt']
 
-The `lambda_function.py` file contains the code for the AWS Lambda function that utilizes the TFLite model:
+## Training Process
+
+1. Data Preparation:
+   - Uses `ImageDataGenerator` for data augmentation and preprocessing.
+   - Applies transformations like shear, zoom, and horizontal flip to training data.
+
+2. Model Training:
+   - Utilizes transfer learning with Xception as the base model.
+   - Trains for 50 epochs with model checkpointing to save the best model.
+   - Uses Adam optimizer with a learning rate of 0.0005.
+
+3. Model Evaluation:
+   - Evaluates the trained model on a separate test dataset.
+
+## Lambda Function for Deployment
+
+The `lambda_function.py` file contains the code for deploying the model as an AWS Lambda function:
 
 ```python
 import tflite_runtime.interpreter as tflite
@@ -86,9 +103,9 @@ def lambda_handler(event, context):
     return result
 ```
 
-## Dockerfile
+## Docker Configuration
 
-The Dockerfile is used to create a container image for deploying the model on AWS Lambda:
+The Dockerfile for creating the Lambda deployment image:
 
 ```dockerfile
 FROM public.ecr.aws/lambda/python:3.7
@@ -104,53 +121,22 @@ COPY lambda_function.py lambda_function.py
 CMD [ "lambda_function.lambda_handler" ]
 ```
 
-## Setup and Environment Requirements
-
-just use Kaggle or Colab notebook and don't bother yourself with Huge Requirements.
-
-## Usage
-
-1. Clone the repository:
-   ```
-   git clone [Your Repository URL]
-   cd [Repository Name]
-   ```
-
-2. Set up the environment using micromamba (adjust as needed):
-   ```
-   micromamba create -n fashion_class python=3.7
-   micromamba activate fashion_class
-   pip install -r requirements.txt
-   ```
-
-3. To train the model, run the `deep-learning.ipynb` notebook.
-
-4. For serverless deployment, follow the steps in `serverless.ipynb`.
-
-5. To test the model locally, use `test.py`.
-
-6. To build and deploy the Docker image for Lambda:
-   ```
-   docker build -t fashion-classification .
-   # Follow AWS ECR instructions to push the image
-   ```
-
 ## API Usage
 
-The model is deployed as an AWS Lambda function. To use it, send a POST request to the Lambda function URL with a JSON payload containing the 'url' key pointing to an image:
+The model can be used by sending a POST request to the deployed Lambda function URL with a JSON payload containing the 'url' key pointing to an image:
 
 ```json
 {
   "url": "http://example.com/image-of-clothing.jpg"
 }
 ```
-
-The function will return a dictionary with class probabilities.
+ 
+The function will return a dictionary with class probabilities for the clothing item in the image.
 
 
 ## Contact
 
-[Your Name] - [Your Email]
+Najmeh Mohajeri - nmohajeri@gmail.com
 
-Project Link: [Your GitHub Repository URL]
+
 ```
