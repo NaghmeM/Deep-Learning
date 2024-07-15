@@ -1,5 +1,3 @@
-
-```markdown
 # Fashion Classification Model with Deep Learning
 
 ## Project Overview
@@ -138,5 +136,3 @@ The function will return a dictionary with class probabilities for the clothing 
 
 Najmeh Mohajeri - nmohajeri@gmail.com
 
-
-```
